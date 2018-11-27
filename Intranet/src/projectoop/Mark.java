@@ -2,137 +2,112 @@ package projectoop;
 
 import java.io.Serializable;
 
-public class Mark implements Serializable, Viewable {
-    private double firstAttestation;
-    private double secondAttestation;
-    private double finalExam;
-    private double total;
+public class Mark implements Serializable
+{
+    private double firstAttestation, secondAttestation, finalExam, overall;
+    private double gpa;
+    private String symbol_mark;
 
-    public Mark() {
-        firstAttestation = 0;
-        secondAttestation = 0;
-        finalExam = 0;
+    public Mark()
+    {
+        firstAttestation = secondAttestation = finalExam = overall = 0.0;
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-
-        Mark mark = (Mark) o;
-
-        if (Double.compare(mark.firstAttestation, firstAttestation) != 0) return false;
-        if (Double.compare(mark.secondAttestation, secondAttestation) != 0) return false;
-        if (Double.compare(mark.finalExam, finalExam) != 0) return false;
-        return Double.compare(mark.total, total) == 0;
+    public Mark(double mark, int attestation)
+    {
+        switch (attestation)
+        {
+            case 1:
+                firstAttestation = mark;
+                break;
+            case 2:
+                secondAttestation = mark;
+                break;
+            case 3:
+                finalExam = mark;
+        }
     }
 
-    @Override
-    public int hashCode() {
-        int result;
-        long temp;
-        temp = Double.doubleToLongBits(firstAttestation);
-        result = (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(secondAttestation);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(finalExam);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        temp = Double.doubleToLongBits(total);
-        result = 31 * result + (int) (temp ^ (temp >>> 32));
-        return result;
+    public void calculate_overall()
+    {
+        overall = firstAttestation + secondAttestation + finalExam;
     }
 
-    public String toLetter() {
-        if (retake()) return "F";
-        if (getTotal() > 95) return "A";
-        else if (getTotal() > 90 && getTotal() < 95) return "-A";
-        else if (getTotal() > 85 && getTotal() < 90) return "+B";
-        else if (getTotal() > 80 && getTotal() < 85) return "B";
-        else if (getTotal() > 75 && getTotal() < 80) return "-B";
-        else if (getTotal() > 70 && getTotal() < 75) return "+C";
-        else if (getTotal() > 65 && getTotal() < 70) return "C";
-        else if (getTotal() > 60 && getTotal() < 65) return "-C";
-        else if (getTotal() > 55 && getTotal() < 60) return "D";
-        else if (getTotal() > 50 && getTotal() < 55) return "-D";
-        else return "FAIL";
+    public void calculate_symbolMark()
+    {
+        if(overall >= 95 && overall <= 100)
+            symbol_mark = "A";
+        else if(overall >= 90 && overall < 95)
+            symbol_mark = "A-";
+        else if(overall >= 85 && overall < 90)
+            symbol_mark = "B+";
+        else if(overall >= 80 && overall < 85)
+            symbol_mark = "B";
+        else if(overall >= 75 && overall < 80)
+            symbol_mark = "B-";
+        else if(overall >= 70 && overall < 75)
+            symbol_mark = "C+";
+        else if(overall >= 65 && overall < 70)
+            symbol_mark = "C";
+        else if(overall >= 60 && overall < 65)
+            symbol_mark = "C-";
+        else if(overall >= 55 && overall < 60)
+            symbol_mark = "D+";
+        else if(overall >= 50 && overall < 55)
+            symbol_mark = "D";
+        else
+            symbol_mark = "F";
     }
 
-    private boolean retake() {
-        return (firstAttestation + secondAttestation < 30) || (getFinalExam() < 20);
+    public double getGpa(int credits) {
+        calculate_GPA(credits);
+        return gpa;
+    }
+
+    public String getSymbol_mark() {
+        calculate_symbolMark();
+        return symbol_mark;
+    }
+
+    public void calculate_GPA(int credit)
+    {
+        gpa = (overall*credit)/credit;
+    }
+    public void setFinalExam(double finalExam) {
+        this.finalExam = finalExam;
+    }
+
+    public void setFirstAttestation(double firstAttestation) {
+        this.firstAttestation = firstAttestation;
+    }
+
+    public void setOverall(double overall) {
+        this.overall = overall;
+    }
+
+    public void setSecondAttestation(double secondAttestation) {
+        this.secondAttestation = secondAttestation;
     }
 
     public double getFinalExam() {
         return finalExam;
     }
 
-    public double getTotal() {
-        return total;
+    public double getFirstAttestation() {
+        return firstAttestation;
     }
 
-    public double getFirstAttestation() {
-        if (firstAttestation == -1) return 0;
-        else return firstAttestation;
+    public double getOverall() {
+
+        return firstAttestation+secondAttestation+finalExam;
     }
 
     public double getSecondAttestation() {
-        if (secondAttestation == -1) return 0;
-        else return secondAttestation;
-    }
-
-    public double toNumber() {
-        if (getFinalExam() < 20) return 0;
-        if (getTotal() > 95) return 4.0;
-        else if (getTotal() > 90 && getTotal() < 95) return 3.67;
-        else if (getTotal() > 85 && getTotal() < 90) return 3.33;
-        else if (getTotal() > 80 && getTotal() < 85) return 3.0;
-        else if (getTotal() > 75 && getTotal() < 80) return 2.67;
-        else if (getTotal() > 70 && getTotal() < 75) return 2.33;
-        else if (getTotal() > 65 && getTotal() < 70) return 2.0;
-        else if (getTotal() > 60 && getTotal() < 65) return 1.67;
-        else if (getTotal() > 55 && getTotal() < 60) return 1.33;
-        else if (getTotal() > 50 && getTotal() < 55) return 1.0;
-        else return 0;
-    }
-
-    @Override
-    public boolean view() {
-        System.out.println(pretty());
-        int num = Util.pickView("item",
-                "First Attestation",
-                "Second Attestation",
-                "Final Exam",
-                "Cancel");
-        double d = Util.getReadingScanner().nextDouble();
-        switch (num) {
-            case 1:
-                firstAttestation = d;
-                break;
-            case 2:
-                secondAttestation = d;
-                break;
-            case 3:
-                finalExam = d;
-                break;
-            case 4:
-                break;
-            default:
-                System.out.println("Wrong input");
-                break;
-        }
-        return false;
+        return secondAttestation;
     }
 
     @Override
     public String toString() {
-        return "Mark{" +
-                "firstAttestation=" + firstAttestation +
-                ", secondAttestation=" + secondAttestation +
-                ", finalExam=" + finalExam +
-                ", total=" + total +
-                '}';
-    }
-
-    public String pretty() {
-        return toString();
+        return (firstAttestation + " " + secondAttestation+ " " + finalExam+ " " + overall);
     }
 }
